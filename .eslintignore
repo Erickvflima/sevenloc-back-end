@@ -1,0 +1,7 @@
+/*.js
+**/*.js
+node_modules
+dist
+vitest.config.mts
+**/*.spec.ts
+jest.config.ts
