@@ -1,5 +1,5 @@
 import { ListSupplierDTO } from './dto/listSupplier.dto';
-import { SupplierEntity } from './entity/supplier.entity';
+import { SupplierEntity } from './entity/supplier.sevenloc.entity';
 
 export class SupplierFactory {
   static mapSuppliersToDTO(supplier: SupplierEntity): ListSupplierDTO {

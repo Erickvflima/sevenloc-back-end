@@ -20,6 +20,7 @@ export abstract class BaseDefaultEntity {
     length: 50,
     nullable: false,
     name: 'criado_por',
+    default: 'SYSTEM',
   })
   createdBy: string;
 
@@ -30,7 +31,12 @@ export abstract class BaseDefaultEntity {
   })
   updatedAt: Date;
 
-  @Column({ length: 50, nullable: false, name: 'alterado_por' })
+  @Column({
+    length: 50,
+    nullable: false,
+    name: 'alterado_por',
+    default: 'SYSTEM',
+  })
   updatedBy: string;
 
   constructor({

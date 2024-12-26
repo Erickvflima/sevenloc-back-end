@@ -11,6 +11,9 @@ import { PermissionService } from '@modules/Permission/permission.service';
 import { PermissionByGroupController } from '@modules/PermissionByGroup/permissionByGroup.controller';
 import { PermissionByGroupModule } from '@modules/PermissionByGroup/permissionByGroup.module';
 import { PermissionByGroupService } from '@modules/PermissionByGroup/permissionByGroup.service';
+import { SupplierController } from '@modules/Suppliers/supplier.controller';
+import { SupplierModule } from '@modules/Suppliers/suppliers.module';
+import { SupplierService } from '@modules/Suppliers/suppliers.service';
 import { UserModule } from '@modules/User/user.module';
 import { UsersByGroupController } from '@modules/UserByGroup/usersByGroup.controller';
 import { UserByGroupModule } from '@modules/UserByGroup/usersByGroup.module';
@@ -39,6 +42,7 @@ import { UserService } from 'src/modules/User/user.service';
     }),
     UserModule,
     GroupModule,
+    SupplierModule,
     UserByGroupModule,
     PermissionModule,
     PermissionByGroupModule,
@@ -47,6 +51,7 @@ import { UserService } from 'src/modules/User/user.service';
   controllers: [
     UserController,
     AuthController,
+    SupplierController,
     PermissionController,
     GroupController,
     UsersByGroupController,
@@ -57,6 +62,7 @@ import { UserService } from 'src/modules/User/user.service';
     UserService,
     AuthService,
     GroupService,
+    SupplierService,
     PermissionService,
     PermissionByGroupService,
     UserByGroupService,
@@ -73,6 +79,7 @@ import { UserService } from 'src/modules/User/user.service';
     AuthService,
     PermissionByGroupService,
     GroupService,
+    SupplierService,
     UserByGroupService,
     PermissionService,
     LogService,

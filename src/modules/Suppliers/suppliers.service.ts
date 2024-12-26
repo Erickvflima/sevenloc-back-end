@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
-import { SupplierEntity } from './entity/supplier.entity';
+import { SupplierEntity } from './entity/supplier.sevenloc.entity';
 import { ListSupplierDTO } from './dto/listSupplier.dto';
 import { listResponseDb } from '@interfaces/base';
 import { SupplierFactory } from './suppliers.factory';
@@ -105,7 +105,7 @@ export class SupplierService {
     }
   }
 
-  async deleteSupplier(id: string): Promise<listResponseDb> {
+  async deleteSupplier(id: number): Promise<listResponseDb> {
     try {
       const result = await this.supplierRepository.delete(id);
       if (result.affected === 0) {
