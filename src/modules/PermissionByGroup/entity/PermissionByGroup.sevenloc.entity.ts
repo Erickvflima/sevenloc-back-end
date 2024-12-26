@@ -13,6 +13,7 @@ export class PermissionByGroupEntity extends BaseDefaultEntity {
   groupId: number;
 
   @ManyToOne(() => PermissionEntity, (permission) => permission.groups)
+  @JoinColumn({ name: 'permissao_id' })
   permission: PermissionEntity;
 
   @ManyToOne(() => GroupEntity, (group) => group.permissions)

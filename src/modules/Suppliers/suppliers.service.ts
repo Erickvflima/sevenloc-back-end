@@ -1,17 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 import { SupplierEntity } from './entity/supplier.sevenloc.entity';
 import { ListSupplierDTO } from './dto/listSupplier.dto';
 import { listResponseDb } from '@interfaces/base';
 import { SupplierFactory } from './suppliers.factory';
+import dataSource from '@config/data.source';
 
 @Injectable()
 export class SupplierService {
-  constructor(
-    @InjectRepository(SupplierEntity)
-    private readonly supplierRepository: Repository<SupplierEntity>,
-  ) {}
+  private supplierRepository: Repository<SupplierEntity>;
+  constructor() {
+    this.supplierRepository = dataSource.getRepository(SupplierEntity);
+  }
 
   async createUser(
     supplier: Partial<SupplierEntity>,

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -18,6 +19,8 @@ import { CreateUserDTO } from './dto/createUser.dto';
 import { ListUserDTO } from './dto/listUser.dto';
 import { UpdateUserDTO } from './dto/updateUser.dto';
 import { UserService } from './user.service';
+import { PermissionGuard } from '@auth/permissions.guard';
+import { Permission } from '@decorator/permission';
 
 @ApiBearerAuth('JWT')
 @ApiTags('user')
@@ -26,6 +29,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @UseGuards(PermissionGuard)
   @ApiOperation({ summary: 'Retorna todos os usuários' })
   @ApiResponse({
     status: 200,
@@ -37,6 +41,7 @@ export class UserController {
   }
 
   @Post()
+  @Permission('CADASTRO')
   @ApiOperation({ summary: 'Cria um novo usuário' })
   @ApiResponse({
     status: 201,

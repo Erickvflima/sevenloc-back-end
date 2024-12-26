@@ -9,12 +9,17 @@ import { CreateLinkPermissionByGroupDTO } from './dto/createLinkPermissionByGrou
 import { ListPermissionByGroupDTO } from './dto/listPermissionByGroup.dto';
 import { PermissionByGroupEntity } from './entity/PermissionByGroup.sevenloc.entity';
 import { permissionsByGroupFactory } from './permissionByGroup.factory';
+import { UserByGroupService } from '@modules/UserByGroup/usersByGroup.service';
+import { UserEntity } from '@modules/User/entity/user.sevenloc.entity';
+import { UsersByGroupEntity } from '@modules/UserByGroup/entity/usersByGroup.sevenloc.entity';
 
 @Injectable()
 export class PermissionByGroupService {
   private permissionByGroupRepository: Repository<PermissionByGroupEntity>;
   private permissionRepository: Repository<PermissionEntity>;
   private groupRepository: Repository<GroupEntity>;
+  private userRepository: Repository<UserEntity>;
+  private userByGroupService = new UserByGroupService();
 
   constructor() {
     this.permissionByGroupRepository = dataSource.getRepository(
@@ -22,6 +27,7 @@ export class PermissionByGroupService {
     );
     this.permissionRepository = dataSource.getRepository(PermissionEntity);
     this.groupRepository = dataSource.getRepository(GroupEntity);
+    this.userRepository = dataSource.getRepository(UserEntity);
   }
 
   async linkPermissionToGroup({
@@ -108,5 +114,68 @@ export class PermissionByGroupService {
         message: erroUpdated,
       };
     }
+  }
+
+  // async hasPermission(email: string, permissionName: string): Promise<boolean> {
+  //   const user = await this.userRepository.find({
+  //     where: { email },
+  //     select: ['id'],
+  //   });
+  //   const permission = await this.permissionRepository.find({
+  //     where: { name: permissionName },
+  //     select: ['id'],
+  //   });
+  //   if (!user) {
+  //     throw new Error('Usuário não encontrado');
+  //   }
+  //   if (!permission) {
+  //     throw new Error('Permissão não encontrado');
+  //   }
+  //   const userId = user[0].id;
+  //   const groupByPermission = await this.permissionByGroupRepository.find({
+  //     where: { permissionId: permission[0].id },
+  //     relations: ['group', 'permission'],
+  //   });
+  //   const groupByUser = await this.userByGroupService.userByGroupList({
+  //     where: { userId },
+  //     relations: ['group'],
+  //   });
+  //   if (groupByUser.document && groupByUser.document.length > 0) {
+  //     for (const userGroup of groupByUser.document) {
+  //       for (const permissionGroup of groupByPermission) {
+  //         if (userGroup.groupId === permissionGroup.group.id) {
+  //           return true;
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   return false;
+  // }
+  async hasPermission(email: string, permissionName: string): Promise<boolean> {
+    const query = this.permissionByGroupRepository
+      .createQueryBuilder('permissionByGroup')
+      .innerJoin('permissionByGroup.permission', 'permission')
+      .innerJoin('permissionByGroup.group', 'group')
+      .where('permission.nome = :permissionName', { permissionName })
+      .andWhere((qb) => {
+        const subQuery = qb
+          .subQuery()
+          .select('usersByGroup.grupo_id')
+          .from(UsersByGroupEntity, 'usersByGroup')
+          .innerJoin(UserEntity, 'user', 'user.id = usersByGroup.userId')
+          .where('user.email = :email')
+          .getQuery();
+        return 'group.id IN ' + subQuery;
+      })
+      .setParameter('email', email)
+      .getMany();
+
+    const groupByPermission = await query;
+
+    if (groupByPermission.length > 0) {
+      return true;
+    }
+    return false;
   }
 }
