@@ -1,6 +1,7 @@
 import { dataBaseList } from '@enums/dataBase';
 import { BaseDefaultEntity } from '@modules/common/entity/BaseDefaultEntity';
-import { Column, Entity } from 'typeorm';
+import { FilesEntity } from '@modules/Files/entity/file.sevenloc.entity';
+import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity({ name: 'Fornecedores', database: dataBaseList.sevenloc })
 export class SupplierEntity extends BaseDefaultEntity {
@@ -15,6 +16,8 @@ export class SupplierEntity extends BaseDefaultEntity {
 
   @Column({ length: 255 })
   email: string;
+
+  @OneToMany(() => FilesEntity, (file) => file.supplier) files: FilesEntity[];
 
   constructor(params: { createdBy: string; updatedBy: string }) {
     super({

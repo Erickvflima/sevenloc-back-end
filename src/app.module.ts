@@ -1,4 +1,7 @@
 import { AuthGuard } from '@auth/auth.guard';
+import { FilesController } from '@modules/Files/files.controller';
+import { FilesModule } from '@modules/Files/files.module';
+import { FilesService } from '@modules/Files/files.service';
 import { GroupController } from '@modules/Group/group.controller';
 import { GroupModule } from '@modules/Group/group.module';
 import { GroupService } from '@modules/Group/group.service';
@@ -42,6 +45,7 @@ import { UserService } from 'src/modules/User/user.service';
     }),
     UserModule,
     GroupModule,
+    FilesModule,
     SupplierModule,
     UserByGroupModule,
     PermissionModule,
@@ -53,6 +57,7 @@ import { UserService } from 'src/modules/User/user.service';
     AuthController,
     SupplierController,
     PermissionController,
+    FilesController,
     GroupController,
     UsersByGroupController,
     PermissionByGroupController,
@@ -62,6 +67,7 @@ import { UserService } from 'src/modules/User/user.service';
     UserService,
     AuthService,
     GroupService,
+    FilesService,
     SupplierService,
     PermissionService,
     PermissionByGroupService,
@@ -79,6 +85,7 @@ import { UserService } from 'src/modules/User/user.service';
     AuthService,
     PermissionByGroupService,
     GroupService,
+    FilesService,
     SupplierService,
     UserByGroupService,
     PermissionService,
