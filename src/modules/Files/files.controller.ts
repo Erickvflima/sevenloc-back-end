@@ -1,5 +1,12 @@
 import { listResponseDb } from '@interfaces/base';
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -9,6 +16,7 @@ import {
 import { FilesService } from './files.service';
 import { ListFilesDTO } from './dto/listFiles.dto copy';
 import { CreateFilesDTO } from './dto/createFiles.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiBearerAuth('JWT')
 @ApiTags('files')
@@ -34,9 +42,15 @@ export class FilesController {
     description: 'Arquivo inserido com sucesso.',
   })
   @ApiResponse({ status: 400, description: 'Requisição inválida.' })
-  async createUser(
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: { fileSize: 10 * 1024 * 1024 },
+    }),
+  )
+  async createFile(
     @Body() createFilesDto: CreateFilesDTO,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<listResponseDb> {
-    return await this.filesService.insertFiles(createFilesDto);
+    return await this.filesService.insertFiles(createFilesDto, file);
   }
 }

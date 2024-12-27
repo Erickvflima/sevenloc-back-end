@@ -54,12 +54,13 @@ export class LogInterceptor implements NestInterceptor {
           method,
           className,
           params,
-          errorMessage: error.message || 'Unknown error',
+          errorMessage: error.message || error,
           updatedBy: userEmail,
           createdBy: userEmail,
         };
-        this.logService.createLog(logData);
-
+        this.logService.createLog(logData).catch((logError) => {
+          Logger.error('Erro ao salvar log de erro', logError);
+        });
         throw new HttpException(
           {
             status: HttpStatus.INTERNAL_SERVER_ERROR,

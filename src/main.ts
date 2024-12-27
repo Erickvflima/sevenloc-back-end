@@ -25,7 +25,13 @@ const bootstrap = async (): Promise<void> => {
     logger: ['error', 'verbose', 'warn', 'fatal'],
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
+
   app.setGlobalPrefix('/api/v1');
 
   const config = new DocumentBuilder()

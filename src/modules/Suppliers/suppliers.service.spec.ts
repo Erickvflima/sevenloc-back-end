@@ -17,6 +17,7 @@ describe('SupplierService', () => {
     updatedBy: 'Admin',
     createdAt: new Date('2024-09-04T12:00:00Z'),
     updatedAt: new Date('2024-09-04T12:00:00Z'),
+    files: []
   };
 
   const supplierDTO = SupplierFactory.mapSuppliersToDTO(supplierEntity);

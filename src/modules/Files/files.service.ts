@@ -5,6 +5,10 @@ import dataSource from '@config/data.source';
 import { ListFilesDTO } from './dto/listFiles.dto copy';
 import { listResponseDb } from '@interfaces/base';
 import { FilesFactory } from './files.factory';
+import * as fs from 'fs';
+import * as zlib from 'zlib';
+import { join } from 'path';
+import { Readable } from 'stream';
 
 @Injectable()
 export class FilesService {
@@ -39,25 +43,63 @@ export class FilesService {
   }
 
   async insertFiles(
-    Files: Partial<FilesEntity>,
+    FilesDTO: Partial<FilesEntity>,
+    file: Express.Multer.File,
   ): Promise<listResponseDb<ListFilesDTO>> {
     try {
-      const newFiles = this.filesRepository.create(Files);
-      const savedFiles = await this.filesRepository.save(newFiles);
-      const FilesDTO = FilesFactory.mapFilesToDTO(savedFiles);
+      if (!file) {
+        throw new Error('Arquivo não foi enviado.');
+      }
+
+      const uploadPath = join(__dirname, '../../../', 'uploads');
+      if (!fs.existsSync(uploadPath)) {
+        fs.mkdirSync(uploadPath, { recursive: true });
+      }
+
+      const filePath = join(uploadPath, file.originalname);
+      const compressedFilePath = `${filePath}.gz`;
+      await this.compressFile(file.buffer, compressedFilePath);
+
+      const newFile = this.filesRepository.create({
+        name: file.originalname,
+        path: compressedFilePath,
+        supplierId: FilesDTO.supplierId,
+      });
+
+      const savedFile = await this.filesRepository.save(newFile);
+
+      const fileDTO = FilesFactory.mapFilesToDTO(savedFile);
+
       return {
         status: 'success',
         message: 'Arquivo inserido com sucesso.',
-        document: [FilesDTO],
+        document: [fileDTO],
         rowsAffected: [],
       };
     } catch (error) {
-      const messageError = 'Erro ao inserir arquivos.';
+      const messageError = 'Erro ao inserir arquivo.';
       Logger.error(messageError, error);
       return {
         status: 'error',
         message: messageError,
       };
     }
+  }
+
+  async compressFile(
+    fileBuffer: Buffer,
+    compressedFilePath: string,
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const output = fs.createWriteStream(compressedFilePath);
+      const gzip = zlib.createGzip();
+
+      const input = Readable.from(fileBuffer);
+
+      input.pipe(gzip).pipe(output);
+
+      output.on('finish', () => resolve());
+      output.on('error', (error) => reject(error));
+    });
   }
 }

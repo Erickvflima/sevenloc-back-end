@@ -1,14 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateFilesDTO {
-  @ApiProperty({ example: 'contrato.pdf' })
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty({ example: '1' })
+  @ApiProperty({
+    example: 1,
+    description: 'ID do fornecedor associado ao arquivo',
+  })
   @IsNumber()
   @IsNotEmpty()
+  @Transform(({ value }) => Number(value))
   supplierId: number;
 }
